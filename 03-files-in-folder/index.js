@@ -24,7 +24,7 @@ fs.readdir(folderPath, { withFileTypes: true }, (err, files) => {
         const fileSizeInBytes = stats.size;
         const fileSizeInKB = fileSizeInBytes / 1024;
         
-        stdout.write(`${fileName}-${fileExtension}-${fileSizeInKB.toFixed(3)}kb\n`);
+        stdout.write(`${fileName}-${fileExtension}-${fileSizeInKB.toFixed(2)}kb\n`);
       });
     }
   });
