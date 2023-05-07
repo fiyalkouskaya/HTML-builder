@@ -14,10 +14,10 @@ emitter.on('SIGINT', () => {
 stdin.on('data', data => {
   const input = data.toString();
   const output = fs.createWriteStream(path.join(__dirname, 'output.txt'), 'utf-8');
-    if (input.trim() === 'exit') {
-        stdout.write('Knock, knock, Neo.\n');
-        process.exit();
-    } else {
-        output.write(input);
-      }
+  if (input.trim() === 'exit') {
+    stdout.write('Knock, knock, Neo.\n');
+    process.exit();
+  } else {
+    output.write(input);
+  }
 });
