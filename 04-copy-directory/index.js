@@ -27,7 +27,7 @@ function copyDir() {
       return Promise.all(promises);
     })
     .then(() => {
-      console.log('Copy complete');
+      console.log('Copy completed');
     })
     .catch((err) => {
       console.error('Error during copy:', err);
