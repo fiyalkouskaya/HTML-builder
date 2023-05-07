@@ -11,13 +11,13 @@ function copyDir() {
     })
     .then((files) => {
       const promises = files.map((file) => {
-      const srcFilePath = path.join(srcPath, file);
-      const destFilePath = path.join(destPath, file);
+        const srcFilePath = path.join(srcPath, file);
+        const destFilePath = path.join(destPath, file);
 
-      return fsPromises.stat(srcFilePath)
-        .then((fileStat) => {
-          if (fileStat.isFile()) {
-            return fsPromises.copyFile(srcFilePath, destFilePath);
+        return fsPromises.stat(srcFilePath)
+          .then((fileStat) => {
+            if (fileStat.isFile()) {
+              return fsPromises.copyFile(srcFilePath, destFilePath);
             } else if (fileStat.isDirectory()) {
               return copyDir(srcFilePath, destFilePath);
             }
