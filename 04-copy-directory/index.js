@@ -1,37 +1,45 @@
 const fsPromises = require('fs').promises;
 const path = require('path');
 
-function copyDir() {
+async function checkFolderExist() {
+  try {
+    await fsPromises.access(path.join(__dirname, 'files-copy'));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+async function copyDir() {
   const srcPath = path.join(__dirname, 'files');
   const destPath = path.join(__dirname, 'files-copy');
 
-  fsPromises.mkdir(destPath, { recursive: true })
-    .then(() => {
-      return fsPromises.readdir(srcPath);
-    })
-    .then((files) => {
-      const promises = files.map((file) => {
-        const srcFilePath = path.join(srcPath, file);
-        const destFilePath = path.join(destPath, file);
+  if (await checkFolderExist()) {
+    await fsPromises.rm(destPath, { recursive: true });
+  }
 
-        return fsPromises.stat(srcFilePath)
-          .then((fileStat) => {
-            if (fileStat.isFile()) {
-              return fsPromises.copyFile(srcFilePath, destFilePath);
-            } else if (fileStat.isDirectory()) {
-              return copyDir(srcFilePath, destFilePath);
-            }
-          });
-      });
+  await fsPromises.mkdir(destPath, { recursive: true });
 
-      return Promise.all(promises);
-    })
-    .then(() => {
-      console.log('Copy completed');
-    })
-    .catch((err) => {
-      console.error('Error during copy:', err);
-    });
+  const files = await fsPromises.readdir(srcPath);
+
+  const promises = files.map(async (file) => {
+    const srcFilePath = path.join(srcPath, file);
+    const destFilePath = path.join(destPath, file);
+
+    const fileStat = await fsPromises.stat(srcFilePath);
+
+    if (fileStat.isFile()) {
+      await fsPromises.copyFile(srcFilePath, destFilePath);
+    } else if (fileStat.isDirectory()) {
+      await copyDir(srcFilePath, destFilePath);
+    }
+  });
+
+  await Promise.all(promises);
+
+  console.log('Copy completed');
 }
 
-copyDir();
+copyDir().catch((err) => {
+  console.error('Error during copy:', err);
+});
